@@ -1,0 +1,28 @@
+{
+  "name": "credchain-contracts",
+  "version": "1.0.0",
+  "description": "CredChain smart contracts",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/deploy.js --network sepolia",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost",
+    "node": "hardhat node",
+    "deploy-local": "hardhat run scripts/deploy.js --network hardhat"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
+    "@nomicfoundation/hardhat-ethers": "^3.0.0",
+    "hardhat": "^2.19.0",
+    "ethers": "^6.0.0",
+    "chai": "^4.3.7"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  }
+}
