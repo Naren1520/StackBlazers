@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { getCurrentWallet } from '@/lib/web3Utils';
 
@@ -96,7 +97,16 @@ export default function Home() {
             <div className="group relative">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-xl opacity-0 group-hover:opacity-75 transition duration-300"></div>
               <div className="relative bg-slate-900/90 backdrop-blur border border-blue-500/30 rounded-2xl p-8 h-full transform transition hover:scale-105 hover:border-blue-500/60">
-                <div className="text-5xl mb-4">🏫</div>
+                <div className="mb-4 flex items-center gap-3">
+                  <Image
+                    src="/logo.png"
+                    alt="CredChain Logo"
+                    width={48}
+                    height={48}
+                    className="rounded"
+                  />
+                  <span className="text-xl font-bold text-blue-300">CredChain</span>
+                </div>
                 <h3 className="text-2xl font-bold mb-3 text-white">Institutions</h3>
                 <p className="text-slate-300 mb-6">
                   Issue verifiable digital credentials in seconds. No more paperwork, no more delays.
@@ -119,7 +129,16 @@ export default function Home() {
             <div className="group relative">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur-xl opacity-0 group-hover:opacity-75 transition duration-300"></div>
               <div className="relative bg-slate-900/90 backdrop-blur border border-purple-500/30 rounded-2xl p-8 h-full transform transition hover:scale-105 hover:border-purple-500/60">
-                <div className="text-5xl mb-4">👨‍🎓</div>
+                <div className="mb-4 flex items-center gap-3">
+                  <Image
+                    src="/logo.png"
+                    alt="CredChain Logo"
+                    width={48}
+                    height={48}
+                    className="rounded"
+                  />
+                  <span className="text-xl font-bold text-purple-300">CredChain</span>
+                </div>
                 <h3 className="text-2xl font-bold mb-3 text-white">Students</h3>
                 <p className="text-slate-300 mb-6">
                   Own your credentials. Share them anywhere instantly with a public verification link.
@@ -142,7 +161,16 @@ export default function Home() {
             <div className="group relative">
               <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl blur-xl opacity-0 group-hover:opacity-75 transition duration-300"></div>
               <div className="relative bg-slate-900/90 backdrop-blur border border-green-500/30 rounded-2xl p-8 h-full transform transition hover:scale-105 hover:border-green-500/60">
-                <div className="text-5xl mb-4">🔍</div>
+                <div className="mb-4 flex items-center gap-3">
+                  <Image
+                    src="/logo.png"
+                    alt="CredChain Logo"
+                    width={48}
+                    height={48}
+                    className="rounded"
+                  />
+                  <span className="text-xl font-bold text-green-300">CredChain</span>
+                </div>
                 <h3 className="text-2xl font-bold mb-3 text-white">Employers</h3>
                 <p className="text-slate-300 mb-6">
                   Verify credentials directly on the blockchain. No intermediaries, no delays.
@@ -260,7 +288,16 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             {/* Brand */}
             <div>
-              <h3 className="text-3xl font-bold mb-2 text-white">🔗 CredChain</h3>
+              <div className="flex items-center gap-2 mb-3">
+                <Image
+                  src="/logo.png"
+                  alt="CredChain Logo"
+                  width={40}
+                  height={40}
+                  className="rounded"
+                />
+                <h3 className="text-2xl font-bold text-white">CredChain</h3>
+              </div>
               <p className="text-slate-400 text-sm">
                 Blockchain-powered academic credential verification for the future of education.
               </p>

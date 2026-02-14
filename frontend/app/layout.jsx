@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import '../styles/globals.css';
 import { getCurrentWallet } from '@/lib/web3Utils';
 
@@ -53,8 +54,15 @@ export default function RootLayout({ children }) {
         {/* Navigation Bar */}
         <nav className="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg">
           <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="text-2xl font-bold">🔗 CredChain</span>
+            <Link href="/" className="flex items-center space-x-3">
+              <Image
+                src="/logo.png"
+                alt="CredChain Logo"
+                width={40}
+                height={40}
+                className="rounded"
+              />
+              <span className="text-2xl font-bold">CredChain</span>
             </Link>
 
             <div className="flex items-center space-x-4">

@@ -1,5 +1,11 @@
 import { BrowserProvider, Contract, JsonRpcProvider } from 'ethers';
 
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
+
 /**
  * Get ethers.js BrowserProvider from MetaMask
  * @returns {BrowserProvider} Ethers BrowserProvider instance
