@@ -199,3 +199,71 @@ export const isAdmin = async (address) => {
   const owner = await contract.owner();
   return owner.toLowerCase() === address.toLowerCase();
 };
+
+/**
+ * Check if the current connected wallet is the contract owner/admin.
+ * If `contract` is provided it will be used, otherwise a read-only contract instance is used.
+ * Returns boolean. Errors are caught and false is returned on failure.
+ */
+export const isOwner = async (contract) => {
+  try {
+    const ctr = contract || getContractInstance();
+
+    // Try common owner/admin accessors
+    let ownerAddr;
+    if (typeof ctr.admin === 'function') {
+      ownerAddr = await ctr.admin();
+    } else if (typeof ctr.owner === 'function') {
+      ownerAddr = await ctr.owner();
+    } else if (typeof ctr.getOwner === 'function') {
+      ownerAddr = await ctr.getOwner();
+    } else {
+      console.warn('Contract does not expose owner/admin getter');
+      return false;
+    }
+
+    const current = await getCurrentWallet();
+    if (!current) return false;
+    return ownerAddr.toLowerCase() === current.toLowerCase();
+  } catch (err) {
+    console.error('isOwner check failed:', err);
+    return false;
+  }
+};
+
+/**
+ * Check if an address is a whitelisted issuer/institution.
+ * Tries several common mapping/function names and returns boolean.
+ * If `contract` is provided it will be used, otherwise a read-only contract instance is used.
+ */
+export const isWhitelistedIssuer = async (contract, address) => {
+  try {
+    const ctr = contract || getContractInstance();
+    if (!address) return false;
+
+    // Possible function/mapping names
+    const candidates = [
+      'whitelistedInstitutions',
+      'whitelistedIssuers',
+      'isWhitelisted',
+      'issuers',
+      'whitelist',
+    ];
+
+    for (const name of candidates) {
+      if (typeof ctr[name] === 'function') {
+        const res = await ctr[name](address);
+        // Some functions may return tuple or object; coerce to boolean
+        if (typeof res === 'boolean') return res;
+        if (res && typeof res === 'object' && '0' in res) return Boolean(res[0]);
+        return Boolean(res);
+      }
+    }
+
+    console.warn('No whitelisted issuer accessor found on contract');
+    return false;
+  } catch (err) {
+    console.error('isWhitelistedIssuer failed:', err);
+    return false;
+  }
+};
