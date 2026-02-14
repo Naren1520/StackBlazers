@@ -51,29 +51,15 @@ export const formatHash = (hash) => {
  * Convert file to hex string for on-chain storage
  */
 export const fileToHash = async (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const hex = Buffer.from(reader.result).toString('hex');
-      resolve('0x' + hex);
-    };
-    reader.onerror = reject;
-    reader.readAsArrayBuffer(file);
-  });
+  // For consistency, compute SHA-256 of the file and return as 0x-prefixed hex
+  return await sha256File(file);
 };
 
 /**
  * Generate hash from file content (SHA-256)
  */
 export const generateFileHash = async (file) => {
-  if (!file) return null;
-
-  const arrayBuffer = await file.arrayBuffer();
-  const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
-
-  return '0x' + hashHex;
+  return await sha256File(file);
 };
 
 /**
@@ -81,4 +67,43 @@ export const generateFileHash = async (file) => {
  */
 export const generateMockHash = (input) => {
   return '0x' + crypto.createHash('sha256').update(input).digest('hex');
+};
+
+/**
+ * Compute SHA-256 of a File using Web Crypto API in browser.
+ * Returns 0x-prefixed hex string.
+ */
+export const sha256File = async (file) => {
+  if (!file) return null;
+  const arrayBuffer = await file.arrayBuffer();
+
+  if (globalThis.crypto && globalThis.crypto.subtle) {
+    const hashBuffer = await globalThis.crypto.subtle.digest('SHA-256', arrayBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    return '0x' + hashHex;
+  }
+
+  // Fallback to Node.js crypto (for SSR/testing)
+  const buf = Buffer.from(arrayBuffer);
+  return '0x' + crypto.createHash('sha256').update(buf).digest('hex');
+};
+
+/**
+ * Compute SHA-256 of a text string using Web Crypto API in browser.
+ * Returns 0x-prefixed hex string.
+ */
+export const sha256Text = async (text) => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+
+  if (globalThis.crypto && globalThis.crypto.subtle) {
+    const hashBuffer = await globalThis.crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    return '0x' + hashHex;
+  }
+
+  // Fallback to Node.js crypto
+  return '0x' + crypto.createHash('sha256').update(data).digest('hex');
 };
