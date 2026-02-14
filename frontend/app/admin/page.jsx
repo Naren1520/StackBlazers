@@ -235,7 +235,7 @@ export default function AdminPage() {
 
           <div className="bg-gradient-to-br from-green-900/40 to-green-800/20 backdrop-blur border border-green-500/30 rounded-2xl p-6">
             <p className="text-slate-400 text-sm mb-3">Role</p>
-            <p className="text-3xl font-bold text-green-300">👑 Owner</p>
+            <p className="text-3xl font-bold text-green-300">Owner</p>
           </div>
         </div>
 

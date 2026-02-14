@@ -36,7 +36,7 @@ export default function Home() {
           {/* Badge */}
           <div className="mb-8 inline-block">
             <span className="inline-flex items-center px-4 py-1 rounded-full text-sm font-medium bg-blue-500/10 border border-blue-500/30 text-blue-300">
-              🚀 Blockchain-Powered Credentials
+              Blockchain-Powered Credentials
             </span>
           </div>
 
@@ -58,7 +58,7 @@ export default function Home() {
                   href="/issuer"
                   className="px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded-lg font-semibold text-lg transition transform hover:scale-105 shadow-lg hover:shadow-blue-500/50"
                 >
-                  📝 Issue Credential
+                  Issue Credential
                 </Link>
                 <Link
                   href="/verify"
@@ -254,30 +254,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Tech Stack Section */}
-      <section className="relative py-16 px-4 sm:px-6 lg:px-8 bg-black/60 backdrop-blur-md border-t border-blue-500/10">
-        <div className="max-w-7xl mx-auto">
-          <h3 className="text-2xl font-bold text-center mb-12 text-white">Built With</h3>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 text-center">
-            {[
-              { name: 'Solidity', emoji: '⛓️' },
-              { name: 'Hardhat', emoji: '🔨' },
-              { name: 'Ethers.js', emoji: '📡' },
-              { name: 'Next.js', emoji: '⚛️' },
-              { name: 'Tailwind', emoji: '🎨' },
-              { name: 'Sepolia', emoji: '🧪' },
-            ].map((tech, idx) => (
-              <div key={idx} className="p-4 rounded-lg bg-slate-900/40 border border-blue-500/20 hover:border-blue-500/40 transition">
-                <div className="text-3xl mb-2">{tech.emoji}</div>
-                <p className="font-semibold text-sm text-blue-300">{tech.name}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="relative pt-16 pb-8 px-4 sm:px-6 lg:px-8 border-t border-blue-500/10">
         <div className="max-w-7xl mx-auto">

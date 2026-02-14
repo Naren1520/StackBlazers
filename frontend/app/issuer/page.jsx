@@ -530,7 +530,7 @@ export default function IssuerPage() {
                       Processing...
                     </>
                   ) : (
-                    '🎓 Issue Credential'
+                    ' Issue Credential'
                   )}
                 </button>
               </form>

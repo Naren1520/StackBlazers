@@ -308,7 +308,7 @@ export default function StudentPage() {
                       onClick={() => shareCredential(eduId)}
                       className="flex-1 px-3 py-2 bg-slate-700/50 hover:bg-slate-700 rounded-lg text-sm font-semibold transition"
                     >
-                      📋 Copy Link
+                      Copy Link
                     </button>
                     <a
                       href={`/verify/${eduId}`}
@@ -316,7 +316,7 @@ export default function StudentPage() {
                       rel="noopener noreferrer"
                       className="flex-1 px-3 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-lg text-sm font-semibold transition text-center"
                     >
-                      👁️ View
+                       View
                     </a>
                   </div>
                 </div>

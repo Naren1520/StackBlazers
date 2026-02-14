@@ -32,7 +32,7 @@ export default function VerifyDetailPage() {
         setCredential(null);
       } else {
         setCredential(cred);
-        setMessage(cred.revoked ? '⚠️ This credential has been revoked' : '✓ Credential verified');
+        setMessage(cred.revoked ? 'This credential has been revoked' : '✓ Credential verified');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -180,7 +180,7 @@ export default function VerifyDetailPage() {
               {/* Revoked Warning */}
               {credential.revoked && (
                 <div className="bg-red-600/20 border border-red-500/50 rounded-lg p-6">
-                  <p className="text-red-300 font-bold mb-2">⚠️ This credential has been revoked</p>
+                  <p className="text-red-300 font-bold mb-2"> This credential has been revoked</p>
                   <p className="text-sm text-red-200">
                     This credential is no longer valid. Contact the issuing institution for more information.
                   </p>
@@ -220,7 +220,7 @@ export default function VerifyDetailPage() {
                     : 'bg-blue-600 hover:bg-blue-700 text-white'
                 }`}
               >
-                {copied ? '✅ Copied!' : '📋 Copy Link'}
+                {copied ? 'Copied!' : 'Copy Link'}
               </button>
               <p className="text-xs text-slate-400 text-center mt-3">
                 Click to copy the shareable verification link
