@@ -38,7 +38,7 @@ export const switchToSepolia = async () => {
   try {
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: '0xaa36a7' }], // Sepolia chain ID
+      params: [{ chainId: '0x7A69' }], // Hardhat Localhost chain ID (31337)
     });
   } catch (switchError) {
     // This error code indicates that the chain has not been added to MetaMask
@@ -48,15 +48,15 @@ export const switchToSepolia = async () => {
           method: 'wallet_addEthereumChain',
           params: [
             {
-              chainId: '0xaa36a7',
-              chainName: 'Sepolia',
-              rpcUrls: ['https://sepolia.infura.io/v3/'],
+              chainId: '0x7A69',
+              chainName: 'Localhost 8545',
+              rpcUrls: ['http://127.0.0.1:8545'],
               nativeCurrency: {
                 name: 'Ethereum',
                 symbol: 'ETH',
                 decimals: 18,
               },
-              blockExplorerUrls: ['https://sepolia.etherscan.io'],
+              blockExplorerUrls: [],
             },
           ],
         });
