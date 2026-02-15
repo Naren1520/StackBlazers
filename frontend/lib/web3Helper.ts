@@ -67,17 +67,10 @@ export const getReadOnlyContract = (contractAddress: string, contractABI: any): 
       throw new Error('Contract address and ABI are required');
     }
 
-    if (typeof window === 'undefined' || !window.ethereum) {
-      // Fallback for SSR or when MetaMask is not available
-      const provider = new JsonRpcProvider(
-        process.env.NEXT_PUBLIC_RPC_URL || 'https://sepolia.infura.io/v3/'
-      );
-      return new Contract(contractAddress, contractABI, provider);
-    }
-
-    const provider = new BrowserProvider(window.ethereum);
-    const contract = new Contract(contractAddress, contractABI, provider);
-    return contract;
+    // Always use JsonRpcProvider for read-only calls to avoid MetaMask network issues
+    const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || 'http://127.0.0.1:8545';
+    const provider = new JsonRpcProvider(rpcUrl);
+    return new Contract(contractAddress, contractABI, provider);
   } catch (error: any) {
     throw new Error(`Failed to initialize read-only contract: ${error.message}`);
   }
@@ -143,12 +136,12 @@ export const switchToSepolia = async (): Promise<void> => {
       throw new Error('MetaMask is not installed');
     }
 
-    const sepoliaChainId = '0xaa36a7'; // 11155111 in hex
+    const localhostChainId = '0x7A69'; // 31337 in hex (Hardhat)
 
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: sepoliaChainId }],
+        params: [{ chainId: localhostChainId }],
       });
     } catch (switchError: any) {
       // Chain not added, add it
@@ -157,15 +150,15 @@ export const switchToSepolia = async (): Promise<void> => {
           method: 'wallet_addEthereumChain',
           params: [
             {
-              chainId: sepoliaChainId,
-              chainName: 'Sepolia',
+              chainId: localhostChainId,
+              chainName: 'Localhost 8545',
               nativeCurrency: {
                 name: 'Ethereum',
                 symbol: 'ETH',
                 decimals: 18,
               },
-              rpcUrls: ['https://sepolia.infura.io/v3/'],
-              blockExplorerUrls: ['https://sepolia.etherscan.io'],
+              rpcUrls: ['http://127.0.0.1:8545'],
+              blockExplorerUrls: [],
             },
           ],
         });
@@ -174,7 +167,7 @@ export const switchToSepolia = async (): Promise<void> => {
       }
     }
   } catch (error: any) {
-    throw new Error(`Failed to switch to Sepolia: ${error.message}`);
+    throw new Error(`Failed to switch to Localhost: ${error.message}`);
   }
 };
 
@@ -194,13 +187,13 @@ export const getCurrentChainId = async (): Promise<number> => {
 };
 
 /**
- * Check if user is on Sepolia network
- * @returns {Promise<boolean>} True if on Sepolia
+ * Check if user is on the correct network (Localhost 8545)
+ * @returns {Promise<boolean>} True if on Localhost
  */
 export const isOnSepolia = async (): Promise<boolean> => {
   try {
     const chainId = await getCurrentChainId();
-    return chainId === 11155111; // Sepolia chain ID
+    return chainId === 31337; // Hardhat Localhost chain ID
   } catch {
     return false;
   }

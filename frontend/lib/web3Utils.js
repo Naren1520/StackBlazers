@@ -6,12 +6,18 @@ import {
   getReadOnlyContract,
   requestAccount,
   getCurrentAccount,
+  switchToSepolia,
 } from './web3Helper';
 import ABI from './abi.json';
 import contractAddresses from './contractAddress.json';
 
 const NETWORK_ID = 'sepolia';
-const CONTRACT_ADDRESS = contractAddresses[NETWORK_ID];
+const CONTRACT_ADDRESS =
+  process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
+  contractAddresses['localhost'] ||
+  contractAddresses[NETWORK_ID];
+
+console.log('Using CONTRACT_ADDRESS:', CONTRACT_ADDRESS);
 
 /**
  * Get provider instance
@@ -41,9 +47,26 @@ export const getContractInstance = () => {
  * @returns {Promise<{signer: ethers.Signer, contract: ethers.Contract}>}
  */
 export const getSignerAndContractInstance = async () => {
+  await ensureLocalNetwork();
   const signer = await getSigner();
   const contract = await getContract(CONTRACT_ADDRESS, ABI);
   return { signer, contract };
+};
+
+/**
+ * Ensure MetaMask is on Localhost 8545 (chain 31337)
+ */
+const ensureLocalNetwork = async () => {
+  if (typeof window === 'undefined' || !window.ethereum) return;
+  try {
+    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+    if (chainId !== '0x7a69') {
+      // Not on Localhost 8545 — switch automatically
+      await switchToSepolia(); // reused function name, now points to localhost
+    }
+  } catch (e) {
+    console.warn('Could not switch network:', e);
+  }
 };
 
 /**
@@ -51,6 +74,7 @@ export const getSignerAndContractInstance = async () => {
  * @returns {Promise<string>} Connected wallet address
  */
 export const connectMetaMask = async () => {
+  await ensureLocalNetwork();
   return await requestAccount();
 };
 
@@ -59,6 +83,7 @@ export const connectMetaMask = async () => {
  * @returns {Promise<string|null>} Current account or null
  */
 export const getCurrentWallet = async () => {
+  await ensureLocalNetwork();
   return await getCurrentAccount();
 };
 
@@ -95,28 +120,63 @@ export const removeFromWhitelist = async (institutionAddress) => {
 
 /**
  * Issue a credential
- * @param {Object} credentialData - Credential details
- * @returns {Promise<ethers.TransactionResponse>}
+ * @param {string|Object} studentWalletOrData - Student wallet address or credential data object
+ * @param {string} [studentName] - Student name
+ * @param {string} [institutionName] - Institution name
+ * @param {string} [credentialType] - Credential type
+ * @param {string} [courseOrProgram] - Course or program
+ * @param {string} [pdfHash] - Document hash
+ * @returns {Promise<string>} EduID
  */
-export const issueCredential = async (credentialData) => {
+export const issueCredential = async (studentWalletOrData, studentName, institutionName, credentialType, courseOrProgram, pdfHash) => {
   const { contract } = await getSignerAndContractInstance();
-  const {
-    studentWallet,
-    studentName,
-    institutionName,
-    credentialType,
-    courseOrProgram,
-    pdfHash,
-  } = credentialData;
 
-  return await contract.issueCredential(
-    studentWallet,
-    studentName,
-    institutionName,
-    credentialType,
-    courseOrProgram,
-    pdfHash
-  );
+  let wallet, name, inst, cType, course, hash;
+
+  if (typeof studentWalletOrData === 'object' && studentWalletOrData !== null) {
+    // Called with a single object
+    wallet = studentWalletOrData.studentWallet;
+    name = studentWalletOrData.studentName;
+    inst = studentWalletOrData.institutionName;
+    cType = studentWalletOrData.credentialType;
+    course = studentWalletOrData.courseOrProgram;
+    hash = studentWalletOrData.pdfHash;
+  } else {
+    // Called with individual arguments
+    wallet = studentWalletOrData;
+    name = studentName;
+    inst = institutionName;
+    cType = credentialType;
+    course = courseOrProgram;
+    hash = pdfHash;
+  }
+
+  // Ensure documentHash is a proper bytes32 hex string
+  if (hash && !hash.startsWith('0x')) {
+    hash = '0x' + hash;
+  }
+  // Pad to 32 bytes if needed (SHA-256 is already 32 bytes)
+  if (hash && hash.length < 66) {
+    hash = hash.padEnd(66, '0');
+  }
+
+  const tx = await contract.issueCredential(wallet, name, inst, cType, course, hash);
+  const receipt = await tx.wait();
+
+  // The event has `string indexed eduId`, which stores keccak256(eduId) in topics
+  // so we can't decode the plain text from the event log.
+  // Instead, query the student's credential list and return the last one added.
+  try {
+    const readContract = getContractInstance();
+    const studentCreds = await readContract.getStudentCredentials(wallet);
+    if (studentCreds && studentCreds.length > 0) {
+      return studentCreds[studentCreds.length - 1];
+    }
+  } catch (err) {
+    console.error('Error fetching student credentials after issuance:', err);
+  }
+
+  return 'unknown';
 };
 
 /**
@@ -126,7 +186,7 @@ export const issueCredential = async (credentialData) => {
  */
 export const verifyCredential = async (eduId) => {
   const contract = getContractInstance();
-  const [exists, credential] = await contract.verifyCredential(eduId);
+  const [credential, exists] = await contract.verifyCredential(eduId);
   return { exists, credential };
 };
 
@@ -197,6 +257,7 @@ export const getCredentialCount = async () => {
 export const isAdmin = async (address) => {
   const contract = getContractInstance();
   const owner = await contract.owner();
+  console.log('Contract owner:', owner, 'Address:', address);
   return owner.toLowerCase() === address.toLowerCase();
 };
 
