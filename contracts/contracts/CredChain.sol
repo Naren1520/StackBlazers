@@ -67,6 +67,8 @@ contract CredentialRegistry {
 
     event CredentialRevoked(string indexed eduId, address indexed revokedBy, uint256 timestamp);
 
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner, uint256 timestamp);
+
     // ============ Modifiers ============
     modifier onlyOwner() {
         require(msg.sender == owner, "Only owner can call this function");
@@ -92,6 +94,20 @@ contract CredentialRegistry {
     }
 
     // ============ Admin Functions (Owner Only) ============
+
+    /**
+     * @dev Transfer ownership to a new address
+     * @param newOwner Address of the new owner
+     */
+    function transferOwnership(address newOwner) external onlyOwner {
+        require(newOwner != address(0), "Invalid new owner address");
+        require(newOwner != owner, "Already the owner");
+        
+        address oldOwner = owner;
+        owner = newOwner;
+        
+        emit OwnershipTransferred(oldOwner, newOwner, block.timestamp);
+    }
 
     /**
      * @dev Whitelist or remove an issuer (institution)

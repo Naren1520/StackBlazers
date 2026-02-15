@@ -1,4 +1,5 @@
 const hre = require("hardhat");
+require("dotenv").config();
 
 async function main() {
   try {
@@ -50,6 +51,22 @@ async function main() {
 
     fs.writeFileSync(addressFile, JSON.stringify(deploymentData, null, 2));
     console.log("\nDeployment info saved to:", addressFile);
+
+    // Transfer ownership if ADMIN_ADDRESS is set in .env
+    const adminAddress = process.env.ADMIN_ADDRESS;
+    if (adminAddress && adminAddress !== "" && adminAddress !== "0x0000000000000000000000000000000000000000") {
+      console.log("\n🔐 Transferring ownership to ADMIN_ADDRESS...");
+      console.log("Admin Address:", adminAddress);
+      
+      const newOwner = hre.ethers.getAddress(adminAddress);
+      const tx = await credentialRegistry.transferOwnership(newOwner);
+      await tx.wait();
+      
+      const verifyOwner = await credentialRegistry.owner();
+      console.log("✅ Ownership transferred to:", verifyOwner);
+    } else {
+      console.log("\nℹ️ No ADMIN_ADDRESS set in .env, keeping deployer as owner");
+    }
 
   } catch (error) {
     console.error("Deployment failed!");

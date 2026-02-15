@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import {
   getCurrentWallet,
   connectMetaMask,
@@ -339,7 +339,7 @@ export default function IssuerPage() {
             <div className="bg-slate-900/60 backdrop-blur border border-green-500/30 rounded-2xl p-8 flex flex-col items-center justify-center">
               <h3 className="text-2xl font-bold mb-6 text-white">Verification QR Code</h3>
               <div className="bg-white p-6 rounded-lg mb-6">
-                <QRCode
+                <QRCodeSVG
                   value={issuedCredential.verifyUrl}
                   size={256}
                   level="H"
