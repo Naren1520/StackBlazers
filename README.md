@@ -251,3 +251,10 @@ ADMIN_ADDRESS=0x...  # Auto-receives ownership on deploy
 - Naren S J
 - narensonu1520@gmail.com
 - raitharun568@gmail.com
+
+## Related Project(Same with enhancement and advanced ui)
+
+- **CredChain Repository:** https://github.com/Naren1520/CredChain.git
+- **Live Demo / Deployment:** https://credchain-naren.vercel.app/
+
+These links point to a related, more advanced implementation and its deployed demo. Refer to that repository. But its not completed fully and backend parts are remaining its an enhanced vision of ui of this project 
