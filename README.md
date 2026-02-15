@@ -18,7 +18,10 @@ StackBlazers/
 │   ├── contracts/
 │   │   └── CredChain.sol
 │   ├── scripts/
-│   │   └── deploy.js
+│   │   ├── deploy.js
+│   │   ├── transferOwnership.js
+│   │   └── whitelist.js
+│   ├── .env                 # ADMIN_ADDRESS, PRIVATE_KEY, etc.
 │   ├── hardhat.config.js
 │   └── package.json
 ├── frontend/               # Next.js application
@@ -35,6 +38,7 @@ StackBlazers/
 │   │   ├── constants.ts
 │   │   ├── web3Helper.ts
 │   │   └── web3Utils.js
+│   ├── .env.local          # Contract address, RPC URL
 │   ├── styles/
 │   │   └── globals.css
 │   └── package.json
@@ -56,12 +60,15 @@ cd contracts
 npm install
 ```
 
-Create `contracts/.env` for Sepolia deployments:
+Create `contracts/.env` for deployments:
 
 ```
 SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/YOUR-PROJECT-ID
 PRIVATE_KEY=your-wallet-private-key
 ETHERSCAN_API_KEY=your-etherscan-key
+
+# Admin Address - This address will receive ownership after deployment
+ADMIN_ADDRESS=0xYourAdminAddress
 ```
 
 Compile:
@@ -82,7 +89,10 @@ In a new terminal:
 npm run deploy:local
 ```
 
-The deployment script saves info to `contracts/deployedAddress.json`.
+The deployment script:
+1. Deploys the contract
+2. Saves info to `contracts/deployedAddress.json`
+3. Automatically transfers ownership to `ADMIN_ADDRESS` (if set in `.env`)
 
 #### Sepolia deployment
 
@@ -119,6 +129,7 @@ Open `http://localhost:3000`.
 #### Admin Functions
 
 - `whitelistIssuer(address, bool, string)` - Manage institutions
+- `transferOwnership(address)` - Transfer admin rights to new address
 
 #### Institution Functions
 
@@ -175,8 +186,10 @@ struct Credential {
 - `npm run compile` - Compile contracts
 - `npm run test` - Run tests
 - `npm run node` - Start Hardhat local node
-- `npm run deploy:local` - Deploy to local node (31337)
+- `npm run deploy:local` - Deploy to local node (auto-transfers ownership if ADMIN_ADDRESS set)
 - `npm run deploy` - Deploy to Sepolia
+- `npm run transfer-ownership` - Transfer ownership to ADMIN_ADDRESS from .env
+- `npm run whitelist` - Whitelist an institution
 
 ### Frontend
 
@@ -200,6 +213,7 @@ NEXT_PUBLIC_RPC_URL=http://127.0.0.1:8545
 SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/...
 PRIVATE_KEY=0x...
 ETHERSCAN_API_KEY=...
+ADMIN_ADDRESS=0x...  # Auto-receives ownership on deploy
 ```
 
 ## Network Configuration
@@ -210,6 +224,8 @@ ETHERSCAN_API_KEY=...
 ## Features
 
 - Role-based access control (Admin, Issuer, Student, Verifier)
+- Ownership transfer support (via `transferOwnership`)
+- Auto ownership transfer on deploy (via ADMIN_ADDRESS env)
 - Unique EduID generation (keccak256 based)
 - PDF document hashing and verification (SHA-256)
 - Credential revocation
@@ -223,6 +239,7 @@ ETHERSCAN_API_KEY=...
 ## Security Notes
 
 - Only contract owner can whitelist institutions
+- Ownership can be transferred via `transferOwnership()`
 - Only whitelisted institutions can issue credentials
 - Only issuer or owner can revoke credentials
 - Document hashes stored on-chain for integrity
@@ -233,3 +250,4 @@ ETHERSCAN_API_KEY=...
 
 - Naren S J
 - narensonu1520@gmail.com
+- raitharun568@gmail.com

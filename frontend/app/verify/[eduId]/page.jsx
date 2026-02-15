@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import { verifyCredential } from '@/lib/web3Utils';
 import { useParams } from 'next/navigation';
 
@@ -196,7 +196,7 @@ export default function VerifyDetailPage() {
               <h3 className="text-xl font-bold mb-4 text-white">Shareable QR</h3>
               <div className="bg-white p-4 rounded-lg">
                 {currentUrl && (
-                  <QRCode
+                  <QRCodeSVG
                     value={currentUrl}
                     size={200}
                     level="H"
