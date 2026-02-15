@@ -97,7 +97,7 @@ The deployment script:
 #### Sepolia deployment
 
 ```bash
-npm run deploy
+npm run deploy or npm run deploy:local
 ```
 
 ### 2) Frontend (Next.js)
