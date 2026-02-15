@@ -2,12 +2,12 @@ const hre = require("hardhat");
 
 async function main() {
   try {
-    console.log("🚀 Starting deployment of CredentialRegistry...\n");
+    console.log("Starting deployment of CredentialRegistry...\n");
 
     // Get the contract factory
     const CredentialRegistry = await hre.ethers.getContractFactory("CredentialRegistry");
     
-    console.log("📦 Deploying contract...");
+    console.log(" Deploying contract...");
     const credentialRegistry = await CredentialRegistry.deploy();
 
     // Wait for deployment to finish
@@ -15,9 +15,9 @@ async function main() {
 
     const contractAddress = await credentialRegistry.getAddress();
 
-    console.log("\n✅ CredentialRegistry deployed successfully!");
-    console.log("📍 Contract Address:", contractAddress);
-    console.log("🔗 Network:", hre.network.name);
+    console.log("\nCredentialRegistry deployed successfully!");
+    console.log("Contract Address:", contractAddress);
+    console.log("Network:", hre.network.name);
     
     // Verify on Etherscan if available
     if (hre.network.name !== "hardhat" && hre.network.name !== "localhost") {
@@ -30,9 +30,9 @@ async function main() {
           address: contractAddress,
           constructorArguments: [],
         });
-        console.log("✅ Contract verified on Etherscan!");
+        console.log("Contract verified on Etherscan!");
       } catch (verifyError) {
-        console.log("⚠️ Verification skipped:", verifyError.message);
+        console.log("Verification skipped:", verifyError.message);
       }
     }
 
@@ -49,10 +49,10 @@ async function main() {
     };
 
     fs.writeFileSync(addressFile, JSON.stringify(deploymentData, null, 2));
-    console.log("\n📝 Deployment info saved to:", addressFile);
+    console.log("\nDeployment info saved to:", addressFile);
 
   } catch (error) {
-    console.error("❌ Deployment failed!");
+    console.error("Deployment failed!");
     console.error("Error:", error.message);
     process.exit(1);
   }

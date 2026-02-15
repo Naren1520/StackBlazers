@@ -1,5 +1,120 @@
 [
   {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "name": "whitelistIssuer",
+    "inputs": [
+      { "name": "issuer", "type": "address" },
+      { "name": "status", "type": "bool" },
+      { "name": "institutionName", "type": "string" }
+    ],
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "name": "issueCredential",
+    "inputs": [
+      { "name": "studentWallet", "type": "address" },
+      { "name": "studentName", "type": "string" },
+      { "name": "institutionName", "type": "string" },
+      { "name": "credentialType", "type": "string" },
+      { "name": "courseOrProgram", "type": "string" },
+      { "name": "documentHash", "type": "bytes32" }
+    ],
+    "outputs": [{ "name": "eduId", "type": "string" }]
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "name": "revokeCredential",
+    "inputs": [{ "name": "eduId", "type": "string" }],
+    "outputs": []
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "name": "verifyCredential",
+    "inputs": [{ "name": "eduId", "type": "string" }],
+    "outputs": [
+      { "name": "credential", "type": "tuple", "components": [
+        { "name": "eduId", "type": "string" },
+        { "name": "issuer", "type": "address" },
+        { "name": "studentWallet", "type": "address" },
+        { "name": "studentName", "type": "string" },
+        { "name": "institutionName", "type": "string" },
+        { "name": "credentialType", "type": "string" },
+        { "name": "courseOrProgram", "type": "string" },
+        { "name": "issueDate", "type": "uint256" },
+        { "name": "documentHash", "type": "bytes32" },
+        { "name": "revoked", "type": "bool" }
+      ]},
+      { "name": "exists", "type": "bool" }
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "name": "isCredentialValid",
+    "inputs": [{ "name": "eduId", "type": "string" }],
+    "outputs": [{ "name": "", "type": "bool" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "name": "getStudentCredentials",
+    "inputs": [{ "name": "studentWallet", "type": "address" }],
+    "outputs": [{ "name": "", "type": "string[]" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "name": "getCredentialDetails",
+    "inputs": [{ "name": "eduId", "type": "string" }],
+    "outputs": [
+      { "name": "", "type": "tuple", "components": [
+        { "name": "eduId", "type": "string" },
+        { "name": "issuer", "type": "address" },
+        { "name": "studentWallet", "type": "address" },
+        { "name": "studentName", "type": "string" },
+        { "name": "institutionName", "type": "string" },
+        { "name": "credentialType", "type": "string" },
+        { "name": "courseOrProgram", "type": "string" },
+        { "name": "issueDate", "type": "uint256" },
+        { "name": "documentHash", "type": "bytes32" },
+        { "name": "revoked", "type": "bool" }
+      ]}
+    ]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "name": "getCredentialCount",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "name": "getAllCredentials",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "string[]" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "name": "whitelistedIssuers",
+    "inputs": [{ "name": "", "type": "address" }],
+    "outputs": [{ "name": "", "type": "bool" }]
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "name": "owner",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address" }]
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -11,410 +126,6 @@
     ],
     "name": "InstitutionWhitelisted",
     "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "institution",
-        "type": "address"
-      }
-    ],
-    "name": "InstitutionRemovedFromWhitelist",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "string",
-        "name": "eduID",
-        "type": "string"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "issuer",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "studentName",
-        "type": "string"
-      }
-    ],
-    "name": "CredentialIssued",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "string",
-        "name": "eduID",
-        "type": "string"
-      }
-    ],
-    "name": "CredentialRevoked",
-    "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "admin",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "institution",
-        "type": "address"
-      }
-    ],
-    "name": "whitelistInstitution",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "institution",
-        "type": "address"
-      }
-    ],
-    "name": "removeFromWhitelist",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "eduID",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "studentName",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "credentialType",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "course",
-        "type": "string"
-      },
-      {
-        "internalType": "uint16",
-        "name": "year",
-        "type": "uint16"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "pdfHash",
-        "type": "bytes32"
-      }
-    ],
-    "name": "issueCredential",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "eduID",
-        "type": "string"
-      }
-    ],
-    "name": "revokeCredential",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "eduID",
-        "type": "string"
-      }
-    ],
-    "name": "verifyCredential",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "exists",
-        "type": "bool"
-      },
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "issuer",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "studentName",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "credentialType",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "course",
-            "type": "string"
-          },
-          {
-            "internalType": "uint16",
-            "name": "year",
-            "type": "uint16"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "pdfHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "issuedAt",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "revoked",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct CredChain.Credential",
-        "name": "credential",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "eduID",
-        "type": "string"
-      }
-    ],
-    "name": "getCredential",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "issuer",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "studentName",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "credentialType",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "course",
-            "type": "string"
-          },
-          {
-            "internalType": "uint16",
-            "name": "year",
-            "type": "uint16"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "pdfHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "issuedAt",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "revoked",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct CredChain.Credential",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "eduID",
-        "type": "string"
-      }
-    ],
-    "name": "isCredentialValid",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getMyIssuedCredentials",
-    "outputs": [
-      {
-        "internalType": "string[]",
-        "name": "",
-        "type": "string[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getAllCredentials",
-    "outputs": [
-      {
-        "internalType": "string[]",
-        "name": "",
-        "type": "string[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getCredentialCount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "whitelistedInstitutions",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "name": "credentials",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "issuer",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "studentName",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "credentialType",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "course",
-        "type": "string"
-      },
-      {
-        "internalType": "uint16",
-        "name": "year",
-        "type": "uint16"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "pdfHash",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "issuedAt",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "revoked",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
   }
 ]
+
